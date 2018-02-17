@@ -47,9 +47,15 @@ def bytecoin_stats():
     return response.text
 
 def get_bytecoin_price():
-    min_price = 9000
-    max_price = 12000
-    return random.randint(min_price, max_price)
+    last_price = redis.get("bytecoin_price")
+    if last_price >= 350:
+        diff = -50
+    elif last_price <= 122:
+        diff = 32
+    else:
+        diff = random.randint(-5, 5)
+    redis.set("bytecoin_price", last_price + diff)
+    return redis.get("bytecoin_price")
 
 def background_thread():
     """Send server generated events to clients."""
